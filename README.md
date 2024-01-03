@@ -27,5 +27,3 @@ O projeto desenvolvido no âmbito do Projeto Integrador no Centro Universitário
 - Personalização de Estilos e Temas.
 - Atualizações em Tempo Real.
 - Coleta de Feedback.
-
-O MenuQR representa uma solução inovadora que atende às necessidades de modernização e praticidade no setor de gastronomia, proporcionando benefícios operacionais, econômicos e uma experiência aprimorada para clientes e donos de estabelecimentos.
