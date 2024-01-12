@@ -25,8 +25,10 @@ export default function SignInForm () {
                 bg-white
                 max-w-80
                 p-8
+                pb-0
                 rounded-3xl
                 h-96
+                justify-end
             "
         >   
             <h1 className="font-semibold text-4xl"> Entrar </h1>
@@ -46,7 +48,7 @@ export default function SignInForm () {
             />
             <p className="font-extralight text-sm"> Ainda não é membro <Link className="text-red-900 font-medium" href={'#'}> Cadastre-se já </Link></p>
 
-            <Button type="submit"> Entrar </Button>
+            <Button className="bg-red-900 text-white" radius="lg" type="submit"> Entrar </Button>
         </form>
     )
 }
