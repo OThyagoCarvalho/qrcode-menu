@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import SignInForm from './components/SignInForm'
+import SignInForm from './components/SignInOutForm'
 import SignInOutCard from './components/SignInOutCard'
 
 export default function Home() {
