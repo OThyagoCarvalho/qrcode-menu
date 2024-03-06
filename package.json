@@ -13,6 +13,7 @@
   "dependencies": {
     "@heroicons/react": "^2.1.1",
     "@nextui-org/react": "^2.2.9",
+    "firebase-tools": "^13.4.0",
     "framer-motion": "^10.17.5",
     "next": "14.0.4",
     "react": "^18",
