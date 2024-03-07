@@ -2,6 +2,7 @@
 import SignInForm from './components/SignInOutForm'
 import SignInOutCard from './components/SignInOutCard'
 import { useSelector } from 'react-redux'
+import InputText from './components/InputText'
 
 export default function Home() {
   const menu = useSelector( state => state.value.menu)
@@ -12,10 +13,8 @@ export default function Home() {
         className='flex flex-nowrap p-24 bg-white rounded-3xl'
         >
         <SignInForm method='up' />
-        <SignInOutCard imgPath='/pexels-andrea-piacquadio-3801422.jpg' />
-          <p style={{color: 'Black'}}>
-            {menu.menuName}
-          </p>
+        <SignInOutCard imgPath='/pexels-andrea-piacquadio-3801422.jpg' />         
+        <InputText/>
       </div>
     </main>
   )
