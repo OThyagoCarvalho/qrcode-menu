@@ -1,10 +1,11 @@
 'use client'
 import { Button } from "@nextui-org/react";
-import InputText from "../components/InputText"
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import CreateSection from "../components/CreateSection";
+import MenuPreview from "../components/MenuPreview";
 
 export default function EditMenu () {
+
     return (
         <main
             style={{
@@ -48,15 +49,16 @@ export default function EditMenu () {
                 border: '1px solid #9c9c9c',
                 borderRadius: '24px 24px 0 0',
                 padding: '24px 24px 0 24px',
-                display: 'flex',
-                flexDirection: 'column',
+                display: 'flex',                
                 height: '100vh',
                 minHeight: 'fit-content',
-                background: 'white'
+                background: 'white',
+                gap: '48px'             
                 
             }}
                 >
                 <CreateSection />
+                <MenuPreview />
             </section>
         </main>
     )

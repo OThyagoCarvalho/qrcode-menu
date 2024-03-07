@@ -1,0 +1,52 @@
+{ "users": {
+      "userID_1": {
+        "email": "john.doe@example.com",
+        "name": "John Doe",
+        "createdAt": "2022-01-01T12:00:00Z",
+        "updatedAt": "2022-01-01T12:00:00Z"
+      }
+    },
+    "menus": {
+      "menuID_1": {
+        "userID": "userID_1",
+        "title": "Menu do Dia",
+        "description": "Menu especial com pratos deliciosos",
+        "createdAt": "2022-01-01T14:00:00Z",
+        "updatedAt": "2022-01-01T14:00:00Z",
+        "url": "menu-do-dia"
+      }
+    },
+    "menu_items": {
+      "itemID_1": {
+        "name": "Frango Assado",
+        "price": 15.99,
+        "quantity": 20,
+        "weight": 300,
+        "is_featured": true,
+        "promo_price": 12.99,
+        "createdAt": "2022-01-01T15:00:00Z",
+        "updatedAt": "2022-01-01T15:00:00Z",
+        "bookmarks": 5,
+        "img_url": "https://example.com/image1.jpg"
+      },
+      "itemID_2": {
+        "name": "Salmão Grelhado",
+        "price": 18.99,
+        "quantity": 15,
+        "weight": 250,
+        "is_featured": false,
+        "promo_price": 16.99,
+        "createdAt": "2022-01-01T15:00:00Z",
+        "updatedAt": "2022-01-01T15:00:00Z",
+        "bookmarks": 8,
+        "img_url": "https://example.com/image2.jpg"
+      },
+      "itemID_3": {
+        "name": "Risoto de Camarão",
+        "price": 22.99,
+        "quantity": 10,
+        "weight": 350,
+        "is_featured": true,
+        "promo_price": 19.99,
+        "createdAt": "2022-01-01T15:00:00Z"        
+        }}}

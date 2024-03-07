@@ -12,6 +12,7 @@ export default function CreateSection () {
                 borderRadius: '12px',
                 padding: '16px',
                 minHeight: 'fit-content',
+                maxHeight: 'max-content',
                 boxSizing: 'border-box',
                 maxWidth: '360px',
                 display: 'flex',
