@@ -5,6 +5,7 @@ export interface MenuData {
     menuDescription? : string,
     menuUrl: string,
     menuCategories:  MenuCategory[]
+    menuThumbnailImgPath: string
 }
 
 interface MenuCategory {
@@ -46,6 +47,7 @@ interface MenuItem {
     bookmarks?: number
 
     itemUrl?: string
+    itemThumbnailImgPath?: string
 }
 
 export default function MenuPreview ({  menuTitle = 'Default Menu Title', 
