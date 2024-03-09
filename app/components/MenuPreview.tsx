@@ -1,21 +1,25 @@
 
 export interface MenuData {
-    menuId: string,
+    userId?: string,
+    menuId?: string,
     menuTitle: string,
     menuDescription? : string,
-    menuUrl: string,
-    menuCategories:  MenuCategory[]
-    menuThumbnailImgPath: string
+    menuUrl?: string,
+    menuCategories?:  MenuCategory[]
+    menuThumbnailImgPath?: string
 }
 
-interface MenuCategory {
+export interface MenuCategory {
     categoryId?: string
+    menuId?: string
     categoryTitle: string,
     categoryItems?: MenuItem[]
 }
 
-interface MenuItem {
+export interface MenuItem {
     itemId: string
+    categoryId?: string,
+    menuId?: string,
     itemTitle: string,
     itemPrice: number,
     itemQuantity?: number,
@@ -65,8 +69,9 @@ export default function MenuPreview ({  menuTitle = 'Default Menu Title',
 
                                             return (
                                                     <main
+                                                        className="bg-red-900"
                                                         style={{
-                                                            background: '#2A3747',
+                                                            
                                                             display: 'flex',
                                                             justifyContent: 'center',
                                                             flex: '1',

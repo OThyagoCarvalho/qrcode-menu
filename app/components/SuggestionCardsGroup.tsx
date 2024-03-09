@@ -38,7 +38,7 @@ export default function SuggestionCardsGroup () {
             Sugestões de Modelo
         </h2>
         <div
-            className="gap-2 grid grid-cols-2" style={{
+            className="gap-3 grid grid-cols-2" style={{
                 width: '480px',
                 height: '525px',
                 maxHeight: 'fit-contet'

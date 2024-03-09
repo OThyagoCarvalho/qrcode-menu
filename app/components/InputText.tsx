@@ -6,10 +6,12 @@ import AddTaskRoundedIcon from '@mui/icons-material/AddTaskRounded';
 interface Props {
 variant?: "flat" | "bordered" | "underlined" | "faded",
 placeholder?: string
+onConfirmInput?: (inputValue: string) => void
 }
 
 const InputText = ({variant = 'flat',
                     placeholder = 'eg. Hamburguer',
+                    onConfirmInput,
                      ...props}: Props) => {
   const [inputValue, setInputValue] = React.useState('');
   const [isConfirmed, setIsConfirmed] = React.useState(false);
@@ -17,6 +19,7 @@ const InputText = ({variant = 'flat',
 
   const toggleIsConfirmed = () => {
     setIsConfirmed(!isConfirmed);
+    onConfirmInput && onConfirmInput(inputValue)
   };
 
   if (isConfirmed) {
@@ -57,8 +60,6 @@ const InputText = ({variant = 'flat',
           </Button>
         </div>
     )
-    
-
   }
 
   return (
@@ -82,11 +83,13 @@ const InputText = ({variant = 'flat',
       onValueChange={setInputValue}
       onClear={()=> setInputValue('')}
     />
-    <Button
+    {
+      inputValue ?
+      <Button
       isIconOnly
       size='sm'
       variant = 'light'
-    >
+      >
       <AddTaskRoundedIcon
         style={{
           cursor: 'pointer',    
@@ -95,7 +98,16 @@ const InputText = ({variant = 'flat',
         color = 'inherit'
         fontSize='medium'
         onClick={() => inputValue ? toggleIsConfirmed() : setHasError(true)} />
-    </Button>
+
+
+
+    </Button> : <div 
+        style={{
+          width: '24px',
+          height: '24px'
+        }}
+      />
+      }
     </div>
   );
 };
