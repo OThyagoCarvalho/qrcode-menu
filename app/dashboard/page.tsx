@@ -49,7 +49,7 @@ export default function Dashboard () {
                         }}
                     >
                         <Link 
-                            href={`/edit-menu?menu=meu-${menus.length}#menu`}
+                            href={`/edit-menu?menu=meu-0${menus.length}menu`}
                         >
                     <Button
                         variant="flat"
@@ -59,7 +59,7 @@ export default function Dashboard () {
                         onClick={ () => {
                             console.log('clicked')
                             dispatch(addMenu({
-                                menuTitle: `meu-${menus.length}#menu`
+                                menuTitle: `meu-0${menus.length}menu`
                             }))
                         }}  
                         >

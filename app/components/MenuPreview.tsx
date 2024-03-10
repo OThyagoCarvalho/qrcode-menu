@@ -10,8 +10,8 @@ export interface MenuData {
 }
 
 export interface MenuCategory {
-    categoryId?: string
     menuId?: string
+    categoryId?: string
     categoryTitle: string,
     categoryItems?: MenuItem[]
 }

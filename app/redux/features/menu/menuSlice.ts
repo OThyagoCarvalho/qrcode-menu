@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../store";
 import { MenuData } from "@/app/components/MenuPreview";
-
+import { updateMenuAddCategoryPayload } from "@/app/interfaces/menu";
 
 const getInitialStore = () : MenuData[] => {
     
@@ -34,7 +34,18 @@ export const menuSlice = createSlice({
                 state.value.push(action.payload);
             }
         },
-        createCategory: (state, action) => {
+        updateMenuAddCategory: (state, action: PayloadAction<updateMenuAddCategoryPayload>) => {
+            const {menuTitle, newCategory } = action.payload
+            const menuIndex = state.value.findIndex(menu => menu.menuTitle === menuTitle);
+            if (menuIndex !== -1) {
+                const menuToUpdate = state.value[menuIndex];
+                if (menuToUpdate.menuCategories) {
+                    menuToUpdate.menuCategories.push(newCategory as unknown as any);
+                } else {
+                    menuToUpdate.menuCategories = [newCategory as unknown as any];
+                }
+            }
+
         },
         addProduct: (state, action) => {},
         removeProduct: (state, action) => {},
@@ -42,7 +53,7 @@ export const menuSlice = createSlice({
     }
 })
 
-export const {addMenu, createCategory, addProduct, removeProduct, featureProduct} = menuSlice.actions
+export const {addMenu, updateMenuAddCategory, addProduct, removeProduct, featureProduct} = menuSlice.actions
 
 export const selectMenus = (state: RootState) => state.value.value
 
