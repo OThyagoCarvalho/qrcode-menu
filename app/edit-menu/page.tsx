@@ -6,14 +6,14 @@ import MenuPreview, { MenuCategory, MenuData } from "../components/MenuPreview";
 import Link from "next/link";
 import InputText from "../components/InputText";
 import React from "react";
-import { Divider } from "@mui/material";
+import DeleteForeverRoundedIcon from '@mui/icons-material/DeleteForeverRounded';
 
 export default function EditMenu () {
 
     const [ menu, setMenu ] = React.useState<MenuData>({
-        menuTitle: 'Nome do Menu',
+        menuTitle: '',
         menuThumbnailImgPath: '#',
-        menuCategories: undefined,
+        menuCategories: [],
         menuUrl: undefined,
     })
 
@@ -30,15 +30,20 @@ export default function EditMenu () {
 
     const handleSetCategoryOfMenu = (categoryTitle: string) => {
         const newCategory: MenuCategory = {
-            categoryTitle, // Assuming you generate or handle IDs elsewhere if necessary
+            categoryTitle, //handle id here 
         };
-        const categoryExists = menu.menuCategories!.find({'categoryTitle': newCategory})
-        setMenu(prevMenu => ({
-            ...prevMenu,
-            menuCategories: [...(prevMenu.menuCategories || []), newCategory], // Append new category
-        }));
 
-        console.log(JSON.stringify(menu.menuCategories))
+        const categoryExists = menu.menuCategories?.some(category => category.categoryTitle === newCategory.categoryTitle);
+
+
+        if (!categoryExists) {
+            setMenu(prevMenu => ({
+                ...prevMenu,
+                menuCategories: [...(prevMenu.menuCategories || []), newCategory],
+            }));
+        } else {
+            alert("Erro. Categoria já existe.");
+        }
     };
 
     return (
@@ -64,7 +69,7 @@ export default function EditMenu () {
                     radius="md"
                     variant="flat"
                     isIconOnly
-                    className="bg-red-900 h-[48px] w-[48px] text-red-100"
+                    className=" bg-[#d9d9d9] h-[48px] w-[48px] text-red-900"
                     >
                     <ArrowBackRoundedIcon 
                         fontSize="large"
@@ -72,14 +77,36 @@ export default function EditMenu () {
                         />
                 </Button>              
             </Link>
-                <InputText
-                    onConfirmInput={(inputValue) => handleSetMenu({
-                        key: "menuTitle",
-                        value: inputValue
-                    })} 
-                    variant="underlined"
-                    placeholder="Dê um nome para seu menu"
-                    />
+            {
+                !menu.menuTitle ? <InputText
+                onConfirmInput = {(inputValue) => handleSetMenu({
+                    key: "menuTitle",
+                    value: inputValue
+                })} 
+                variant="underlined"
+                placeholder="Dê um nome para seu menu"
+                />
+                                : <div style={{
+                                    display: 'flex',
+                                    alignItems: 'end',
+                                    fontSize: '24px',
+                                    fontWeight: 'bold'
+                                }}> 
+                                    <h2> {menu.menuTitle}</h2>
+                                    <Button radius="md"
+                                        variant="flat"
+                                        isIconOnly
+                                        className="bg-red-900 h-[48px] font-bold w-[48px] ml-3 text-red-100"
+                                        onClick={() => setMenu( prevMenu => (
+                                            {...prevMenu,
+                                            menuTitle: ''
+                                            }
+                                        ))}
+                                        > 
+                                            <DeleteForeverRoundedIcon /> 
+                                    </Button>
+                                </div>
+            }
             </div>
             <section
             id="menu-edition-and-preview-section"
@@ -109,24 +136,24 @@ export default function EditMenu () {
                 display: 'flex',
                 flex: '1',
                 flexDirection: 'column',
-                gap: '16px'
+                gap: '16px',
+                overflowY: 'scroll'
             }}
         >
             <InputText
                 variant="underlined"
                 placeholder="Crie uma categoria"
                 onConfirmInput={(inputValue) => handleSetCategoryOfMenu(inputValue)}
+                shouldClearOnConfirm = {true}
             />
-            <Divider
-                style={{
-                    margin: '4px 0'
-                }}
-            />
-            <InputText />
+
+            {menu.menuCategories?.map((category, i) => {
+                return (
+                    <CreateSection sectionTitle={category.categoryTitle} />
+                )})}
 
         </section>
             {/* create section component above */}
-  
                 <MenuPreview
                     menuTitle={menu.menuTitle}
                     menuCategories={menu.menuCategories}

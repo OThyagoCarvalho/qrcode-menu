@@ -1,13 +1,8 @@
+import { Textarea } from "@nextui-org/react";
 import InputText from "./InputText";
-import { Divider } from "@nextui-org/react";
 
 
-interface CreateSectionProps {
-    sectionTitle: string;
-}
-
-
-export default function CreateSection ({sectionTitle}: CreateSectionProps) {
+export default function AddProduct () {
 
     return (
         <section
@@ -23,22 +18,14 @@ export default function CreateSection ({sectionTitle}: CreateSectionProps) {
                 flexDirection: 'column',
                 gap: '16px'
             }}
-        >   
-        <div style = {{
-            fontWeight: 'bold',
-            display: 'flex'
-        }}>
-           <h2> {sectionTitle} </h2>
-        </div>
-            <Divider
-                style={{
-                    margin: '4px 0'
-                }}
+        >
+        <InputText
+        <Textarea
+            label="(opcional)"
+            placeholder="Descreva seu produto"
+            className="max-w-xs"
             />
-            <InputText />
 
         </section>
     )
 }
-
-

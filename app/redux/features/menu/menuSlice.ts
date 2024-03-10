@@ -1,20 +1,40 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../../store";
+import { MenuData } from "@/app/components/MenuPreview";
+
+
+const getInitialStore = () : MenuData[] => {
+    
+    // get initial state from google firestore    
+    const initialState =[
+        {
+            userId: "",
+            menuId: "",
+            menuTitle: "",
+            menuDescription: "",
+            menuUrl: "",
+            menuCategories: [],
+            menuThumbnailImgPath: ""
+        }
+    ]
+    return initialState
+}
 
 export const menuSlice = createSlice({
-    name: 'menu',
+    name: 'menus',
     initialState: {
-        menu: {
-            menuName: 'Default Menu',
-            categories: [
-                {categoryName: 'Default Category',
-                  items: []      
-            }
-            ]
-        }
+        value: getInitialStore()
     },
     reducers: {
+        addMenu: (state, action: PayloadAction<MenuData>) => {
+
+            if (state.value.length === 1 && state.value[0].menuTitle === '') { 
+                state.value[0] = action.payload
+            } else {
+                state.value.push(action.payload);
+            }
+        },
         createCategory: (state, action) => {
-            state.menu.categories.push(action.payload)
         },
         addProduct: (state, action) => {},
         removeProduct: (state, action) => {},
@@ -22,6 +42,8 @@ export const menuSlice = createSlice({
     }
 })
 
-export const { createCategory, addProduct, removeProduct, featureProduct} = menuSlice.actions
+export const {addMenu, createCategory, addProduct, removeProduct, featureProduct} = menuSlice.actions
+
+export const selectMenus = (state: RootState) => state.value.value
 
 export default menuSlice.reducer
