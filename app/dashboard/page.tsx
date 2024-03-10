@@ -70,9 +70,7 @@ export default function Dashboard () {
                     </Button>
                         </Link> 
                         {
-                            (menus.length > 1 || menus[0].menuTitle) ? <LastCreatedMenuCardsGroup cardsList={menus} />
-                                                : <AddProduct/>
-
+                            (menus.length > 1 || menus[0].menuTitle) && <LastCreatedMenuCardsGroup cardsList={menus} />                                              
                         }
                     </div>
                     <SuggestionCardsGroup />

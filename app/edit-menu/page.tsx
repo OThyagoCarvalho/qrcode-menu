@@ -21,15 +21,21 @@ import DriveFileRenameOutlineRoundedIcon from "@mui/icons-material/DriveFileRena
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 
 import AddProduct from "../components/addProductForm";
-import { addMenu, updateMenuAddCategory } from "../redux/features/menu/menuSlice";
+import {
+  addMenu,
+  updateMenuAddCategory,
+} from "../redux/features/menu/menuSlice";
 
 export default function EditMenu() {
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
 
   const [menuTitle, setMenuTitle] = useState({ menuTitle: "", saved: false });
-  const [autocompleteInputValue, setAutocompleteInputValue] = useState('')
   const [menuCategories, setMenuCategories] = useState<MenuCategory[]>([]);
+
+  const [autocompleteInputValue, setAutocompleteInputValue] = useState("");
+  const [autocompleteSelectedValue, setAutocompleteSelectedValue] =
+    useState("");
 
   return (
     <main
@@ -115,11 +121,10 @@ export default function EditMenu() {
           background: "white",
           gap: "24px",
         }}
-      >  
-
+      >
         <section
-          style={{            
-            borderRadius: "12px",          
+          style={{
+            borderRadius: "12px",
             minHeight: "fit-content",
             maxHeight: "max-content",
             boxSizing: "border-box",
@@ -148,25 +153,35 @@ export default function EditMenu() {
           >
             <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
               <Autocomplete
+                selectedKey={autocompleteSelectedValue}
+                onSelectionChange={setAutocompleteSelectedValue as any}
+                onClear={() => setAutocompleteSelectedValue('')}
                 onInputChange={setAutocompleteInputValue}
                 listboxProps={{
                   emptyContent: (
-                    <Button className="flex justify-center w-full bg-red-900 text-white"
-                        onClick={() => {
-                            setMenuCategories(prevMenuCats => [...prevMenuCats, {categoryTitle: autocompleteInputValue}])
-                            dispatch(updateMenuAddCategory({
-                                menuTitle: menuTitle.menuTitle,
-                                newCategory: {
-                                    categoryTitle: autocompleteInputValue
-                                }
-                            }))
-                        }}
-                    >                      
+                    <Button
+                      className="flex justify-center w-full bg-red-900 text-white"
+                      onClick={() => {
+                        setMenuCategories((prevMenuCats) => [
+                          ...prevMenuCats,
+                          { categoryTitle: autocompleteInputValue },
+                        ]);
+                        dispatch(
+                          updateMenuAddCategory({
+                            menuTitle: menuTitle.menuTitle,
+                            newCategory: {
+                              categoryTitle: autocompleteInputValue,
+                            },
+                          })
+                        );
+                      }}
+                    >
                       Inserir Categoria
                     </Button>
                   ),
                 }}
-                label="Crie ou Selecione uma Categoria"
+                label="Crie ou Escolhar uma Categoria
+                            para editar"
                 className="max-w-xs"
               >
                 {menuCategories.map((menuCategory) => (
@@ -180,9 +195,15 @@ export default function EditMenu() {
               </Autocomplete>
             </div>
           </section>
-          <AddProduct />         
+          { autocompleteSelectedValue && <AddProduct 
+                                            categoryTitle={autocompleteSelectedValue} 
+                                            menuTitle={menuTitle.menuTitle} 
+                                            />}
         </section>
-        <MenuPreview menuTitle={menuTitle.menuTitle} menuCategories={menuCategories}/>
+        <MenuPreview
+          menuTitle={menuTitle.menuTitle}
+          menuCategories={menuCategories}
+        />
       </section>
     </main>
   );

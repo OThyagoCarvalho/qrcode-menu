@@ -57,3 +57,9 @@ interface updateMenuAddCategoryPayload {
   menuTitle: string,
   newCategory: MenuCategory
 }
+
+interface updateCategoryAddProductPayload {
+  menuTitle: string,
+  categoryTitle: string,
+  newProduct: MenuItem
+}
