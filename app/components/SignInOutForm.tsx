@@ -4,6 +4,8 @@ import { Button, Input } from '@nextui-org/react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/16/solid';
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -16,10 +18,13 @@ type SignformProps = {
 
 export default function SignInOutForm({ method }: SignformProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
+
+  const router = useRouter();
 
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -28,23 +33,45 @@ export default function SignInOutForm({ method }: SignformProps) {
   function formSubmitFunction(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    method === 'in'
-      ? signInWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            const user = userCredential.user;
-          })
-          .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-          })
-      : createUserWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            const user = userCredential.user;
-          })
-          .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-          });
+    if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
+      setErrorMessage('Email inválido.');
+      return;
+    }
+
+    if (method === 'in') {
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          if (errorMessage.includes('invalid-credential')) {
+            setErrorMessage('Email ou senha inválidos.');
+          }
+        });
+
+      router.push('/dashboard');
+    } else {
+      if (password !== passwordConfirmation) {
+        setErrorMessage('As senhas não condizem.');
+        return;
+      }
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorMessage);
+        });
+      setPassword('');
+      setEmail('');
+      setPasswordConfirmation('');
+      console.log('cadastro feito com sucesso');
+    }
   }
 
   return (
@@ -66,10 +93,11 @@ export default function SignInOutForm({ method }: SignformProps) {
             justify-end
         `}
     >
-      <h1 className="font-semibold text-4xl">
+      <h1 className="font-semibold text-4xl text-black">
         {' '}
         {method === 'in' ? 'Entrar' : 'Cadastrar'}{' '}
       </h1>
+
       <Input
         variant="underlined"
         type="email"
@@ -78,6 +106,7 @@ export default function SignInOutForm({ method }: SignformProps) {
         required
         value={email}
         onChange={(e) => {
+          setErrorMessage('');
           setEmail(e.target.value);
         }}
       />
@@ -97,6 +126,7 @@ export default function SignInOutForm({ method }: SignformProps) {
         }
         required
         onChange={(e) => {
+          setErrorMessage('');
           setPassword(e.target.value);
         }}
       />
@@ -108,9 +138,16 @@ export default function SignInOutForm({ method }: SignformProps) {
           placeholder="repita sua senha"
           required
           onChange={(e) => {
+            setErrorMessage('');
             setPasswordConfirmation(e.target.value);
           }}
         />
+      )}
+      {errorMessage && (
+        <div>
+          {' '}
+          <p className="text-red-900 text-xs">{errorMessage}</p>
+        </div>
       )}
       {method === 'in' && (
         <p className="font-extralight text-sm">
