@@ -8,10 +8,7 @@ import {useAuthState} from 'react-firebase-hooks/auth'
 
 
 export default function NavBar() {
-  
-  const [user, loading, error] = useAuthState(auth);
-
-  return (
+    return (
     <div className="relative flex items-center justify-center  w-full bg-red-900 text-white h-28 rounded-es-3xl rounded-ee-3xl font-montserrat mb-12">
       <ul className="flex gap-14 text-2xl underline hover:[&_a]:opacity-60 [&_a]:transition">
         <li>

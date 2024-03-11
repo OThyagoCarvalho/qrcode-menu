@@ -44,7 +44,7 @@ export default function SuggestionCardsGroup () {
                 maxHeight: 'fit-contet'
             }}
         >
-            {cardsList.map( card => <SuggestionCard cardTitle={card.cardTitle} cardImgPath={card.cardImgPath} cardImgAlt={card.cardImgAlt} />)}
+            {cardsList.map( card => <SuggestionCard key={card.cardTitle} cardTitle={card.cardTitle} cardImgPath={card.cardImgPath} cardImgAlt={card.cardImgAlt} />)}
         </div>
         </div>
     )

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 
@@ -27,20 +27,56 @@ import AddProduct from "../../components/addProductForm";
 import {
   addMenu,
   selectMenus,
+  setStore,
   updateMenuAddCategory,
 } from "../../redux/features/menu/menuSlice";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "@/app/lib/firebase";
+import { MenuItem } from "@/app/interfaces/menu";
 
 export default function EditMenu() {
-  const searchParams = useSearchParams();
-  const dispatch = useAppDispatch();
-
+  const storedMenu = useAppSelector(selectMenus);
+  const [autocompleteInputValue, setAutocompleteInputValue] = useState("");
+  const [autocompleteSelectedValue, setAutocompleteSelectedValue] =
+    useState("");
+  const [menu, setMenu] = useState<MenuData>({ menuTitle: "" });
   const [menuTitle, setMenuTitle] = useState({ menuTitle: "", saved: false });
   const [menuCategories, setMenuCategories] = useState<MenuCategory[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
 
-  const [autocompleteInputValue, setAutocompleteInputValue] = useState("");
-  const [autocompleteSelectedValue, setAutocompleteSelectedValue] = useState("");
+  const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
+  const menuId = searchParams.get("menu");
+  const userId = searchParams.get("user");
 
-  const userMenus = useAppSelector(selectMenus)
+  useEffect(() => {
+    const fetchUserMenu = async () => {
+      if (!userId || !menuId) return;
+      try {
+        const menuDocRef = doc(db, "users", userId, "menus", menuId);
+        const menuSnapshot = await getDoc(menuDocRef);
+        if (menuSnapshot.exists()) {
+          console.log("Menu específico do usuário:", menuSnapshot.data());
+          const fetchedMenuData = menuSnapshot.data() as MenuData;
+          setMenu({ id: menuSnapshot.id, ...menuSnapshot.data() } as MenuData);
+          setMenuCategories(fetchedMenuData.menuCategories || []);
+        }
+      } catch (error) {
+        console.log("Erro ao buscar menu do usuário:", error);
+      }
+    };
+    fetchUserMenu();
+  }, [userId, menuId]);
+
+  const updateMenu = async (userId: string, menuId: string, menuData: any) => {
+    const menuDocRef = doc(db, "users", userId, "menus", menuId);
+    try {
+      await updateDoc(menuDocRef, menuData);
+      console.log("Menu atualizado com sucesso");
+    } catch (error) {
+      console.error("Erro ao atualizar menu:", error);
+    }
+  };
 
   return (
     <main
@@ -65,8 +101,8 @@ export default function EditMenu() {
             />
           </Button>
         </Link>
-
         <Input
+          autoComplete="hidden"
           isReadOnly={menuTitle.saved}
           id="menu-name-input"
           size="lg"
@@ -86,7 +122,9 @@ export default function EditMenu() {
                         menuTitle: menuTitle.menuTitle,
                       })
                     );
-                    console.log(menuTitle);
+                    updateMenu(userId!, menuId!, {
+                      menuTitle: menuTitle.menuTitle,
+                    });
                   }}
                 />
               </Button>
@@ -98,7 +136,6 @@ export default function EditMenu() {
                       menuTitle: "",
                       saved: !prevMenuTitle.saved,
                     }));
-                    console.log(menuTitle);
                   }}
                 />
               </Button>
@@ -113,7 +150,6 @@ export default function EditMenu() {
           value={menuTitle.menuTitle}
         />
       </div>
-
       <section
         id="menu-edition-and-preview-section"
         style={{
@@ -167,18 +203,34 @@ export default function EditMenu() {
                     <Button
                       className="flex justify-center w-full bg-red-900 text-white"
                       onClick={() => {
-                        setMenuCategories((prevMenuCats) => [
-                          ...prevMenuCats,
-                          { categoryTitle: autocompleteInputValue },
-                        ]);
-                        dispatch(
-                          updateMenuAddCategory({
-                            menuTitle: menuTitle.menuTitle,
-                            newCategory: {
-                              categoryTitle: autocompleteInputValue,
-                            },
+
+                        console.log('menuCategories antes:' + JSON.stringify(menuCategories))
+
+                        const newCategory = { categoryTitle: autocompleteInputValue };
+                      
+                        // Atualizar o estado local primeiro para incluir a nova categoria
+                        setMenuCategories((prevMenuCats) => {
+                          const updatedMenuCategories = [...prevMenuCats, newCategory];
+                          console.log('menuCategories depois: ' + JSON.stringify(updatedMenuCategories))
+                          
+                          // Atualizar o Firestore com o estado local atualizado
+                          updateMenu(userId!, menuId!, {
+                            menuCategories: updatedMenuCategories,
                           })
-                        );
+                          .then(() => {
+                            // Após a atualização bem-sucedida no Firestore, despachar a ação Redux
+                            dispatch(updateMenuAddCategory({
+                              menuTitle: menuTitle.menuTitle,
+                              newCategory,
+                            }));
+                          })
+                          .catch((error) => {
+                            console.error("Erro ao atualizar menu no Firestore:", error);
+                            // Tratar possíveis erros
+                          });
+                      
+                          return updatedMenuCategories; // Retornar o estado atualizado
+                        });
                       }}
                     >
                       Inserir Categoria
@@ -189,7 +241,7 @@ export default function EditMenu() {
                             para editar"
                 className="max-w-xs"
               >
-                {menuCategories.map((menuCategory) => (
+                {menuCategories?.map((menuCategory) => (
                   <AutocompleteItem
                     key={menuCategory.categoryTitle}
                     value={menuCategory.categoryTitle}
@@ -208,8 +260,8 @@ export default function EditMenu() {
           )}
         </section>
         <MenuPreview
-          menuTitle={menuTitle.menuTitle}
-          menuCategories={menuCategories}
+          menuTitle={menuTitle.menuTitle || menu.menuTitle}
+          menuCategories={menu.menuCategories}
         />
       </section>
     </main>

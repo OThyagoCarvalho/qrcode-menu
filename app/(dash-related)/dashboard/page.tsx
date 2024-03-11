@@ -78,7 +78,7 @@ export default function Dashboard() {
                 menuTitle: "Meu Novo Menu",
                 menuDescription: "Clique para Editar seu menu.",
                 userId: user?.uid,
-              }).then(redirect("/dashboard"))
+              })
             }
           >
             <ControlPointTwoToneIcon fontSize="large" color="inherit" />

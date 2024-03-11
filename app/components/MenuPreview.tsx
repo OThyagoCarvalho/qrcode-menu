@@ -59,12 +59,8 @@ export interface MenuItem {
 
 export default function MenuPreview({
   menuTitle = '',
-  menuCategories = []
+  menuCategories
 }: MenuData) {
-  
-    const dispatch = useAppDispatch()
-    const menus = useAppSelector(selectMenus)  
-  
     return (
     <main
       className="bg-red-900"
@@ -97,7 +93,6 @@ export default function MenuPreview({
             textTransform: 'uppercase'
           }}
         >
-          
           {menuTitle}
         </h2>
 
@@ -108,7 +103,7 @@ export default function MenuPreview({
         >
           {menuCategories?.map((category) => {
             return (
-              <div>
+              <div key={category.categoryTitle}>
                 <h3
                   style={{
                     fontSize: "28px",
@@ -126,6 +121,7 @@ export default function MenuPreview({
                   }}
                 >
                   {category.categoryItems?.map((item) => {
+                    console.log('item' + item)
                     return (
                       <li
                         style={{

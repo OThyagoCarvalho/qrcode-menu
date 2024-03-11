@@ -60,6 +60,9 @@ export const menuSlice = createSlice({
         ];
       }
     },
+    setStore: (state, action: PayloadAction<any> ) => {
+      state.value = action.payload
+    },
     addProduct: (state, action) => {},
     removeProduct: (state, action) => {},
     featureProduct: (state, action) => {},
@@ -73,6 +76,7 @@ export const {
   addProduct,
   removeProduct,
   featureProduct,
+  setStore
 } = menuSlice.actions;
 
 export const selectMenus = (state: RootState) => state.value.value;

@@ -1,21 +1,24 @@
 import Image from "next/image";
 import { MenuData } from "./MenuPreview";
+import Link from "next/link";
 
 export type LastCreateMenuCardProps = Pick<
   MenuData,
-  "menuTitle" | "menuDescription" | "menuUrl" | "menuThumbnailImgPath" | "menuId"
+  "menuTitle" | "menuDescription" | "menuUrl" | "menuThumbnailImgPath" | "menuId" | "userId"
 >
 
 export default function LastCreatedMenuCard({
+  userId,
   menuId,
   menuTitle,
   menuDescription,
   menuThumbnailImgPath,
   menuUrl,
 }: LastCreateMenuCardProps) {
+
   return (
-    <a  
-    type="button"
+    <Link  
+      href={`/edit-menu?user=${userId}&menu=${menuId}`}
       style={{
         border: "1px solid #DEDEDE",
         display: "flex",
@@ -74,6 +77,6 @@ export default function LastCreatedMenuCard({
           src={menuUrl}
         />
       </div>
-    </a>
+    </Link>
   );
 }

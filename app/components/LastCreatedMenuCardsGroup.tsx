@@ -10,12 +10,11 @@ import { MenuData } from "./MenuPreview";
 export default function LastCreatedMenuCardsGroup() {
   const [menus, setMenus] = useState<MenuData[]>([]);
   const [user] = useAuthState(auth);
-  const uid = user?.uid;
 
   useEffect(() => {
     const fetchUserMenus = async () => {
       try {
-        const menusCollectionRef = collection(db, "users", uid!, "menus");
+        const menusCollectionRef = collection(db, "users", user?.uid!, "menus");
         const menusSnapshot = await getDocs(menusCollectionRef);
         const menusData = menusSnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -30,7 +29,7 @@ export default function LastCreatedMenuCardsGroup() {
     };
 
     fetchUserMenus();
-  }, [uid]);
+  }, [user?.uid]);
 
   return (
     <div
@@ -51,6 +50,8 @@ export default function LastCreatedMenuCardsGroup() {
       </h2>
       {menus.map((card) => (
         <LastCreatedMenuCard
+          key={card.id}
+            userId={user?.uid}
             menuId={card.id}
           menuTitle={card.menuTitle}
           menuDescription={card.menuDescription}

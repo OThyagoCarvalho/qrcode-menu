@@ -17,14 +17,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className='light'>
-      <body className={inter.className}>
           <NextUIProviderWrapper>
               <NavBar />
               {children}
           </NextUIProviderWrapper>
-      </body>
-      </html>
-
   )
 }
