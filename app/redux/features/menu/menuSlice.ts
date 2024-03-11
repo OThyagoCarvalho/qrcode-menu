@@ -8,17 +8,7 @@ import {
 
 const getInitialStore = (): MenuData[] => {
   // get initial state from google firestore
-  const initialState = [
-    {
-      userId: "",
-      menuId: "",
-      menuTitle: "",
-      menuDescription: "",
-      menuUrl: "",
-      menuCategories: [],
-      menuThumbnailImgPath: "",
-    },
-  ];
+  const initialState = [] as MenuData[];
   return initialState;
 };
 
@@ -70,6 +60,9 @@ export const menuSlice = createSlice({
         ];
       }
     },
+    setStore: (state, action: PayloadAction<any> ) => {
+      state.value = action.payload
+    },
     addProduct: (state, action) => {},
     removeProduct: (state, action) => {},
     featureProduct: (state, action) => {},
@@ -83,6 +76,7 @@ export const {
   addProduct,
   removeProduct,
   featureProduct,
+  setStore
 } = menuSlice.actions;
 
 export const selectMenus = (state: RootState) => state.value.value;

@@ -1,41 +1,75 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
-
-import CreateSection from "../components/CreateSection";
-import MenuPreview, { MenuCategory, MenuData } from "../components/MenuPreview";
+import { useAppDispatch } from "../../redux/hooks";
+import MenuPreview, {
+  MenuCategory,
+  MenuData,
+} from "../../components/MenuPreview";
 import Link from "next/link";
-import InputText from "../components/InputText";
 import {
   Autocomplete,
   AutocompleteItem,
   Button,
   Input,
-  menu,
 } from "@nextui-org/react";
 
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import DriveFileRenameOutlineRoundedIcon from "@mui/icons-material/DriveFileRenameOutlineRounded";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 
-import AddProduct from "../components/addProductForm";
+import AddProduct from "../../components/addProductForm";
 import {
   addMenu,
   updateMenuAddCategory,
-} from "../redux/features/menu/menuSlice";
+} from "../../redux/features/menu/menuSlice";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { db } from "@/app/lib/firebase";
+import { MenuItem } from "@/app/interfaces/menu";
+interface MenuItems {
+  [categoryTitle: string]: MenuItem[]; // Items by category
+}
 
 export default function EditMenu() {
-  const searchParams = useSearchParams();
-  const dispatch = useAppDispatch();
-
-  const [menuTitle, setMenuTitle] = useState({ menuTitle: "", saved: false });
-  const [menuCategories, setMenuCategories] = useState<MenuCategory[]>([]);
-
   const [autocompleteInputValue, setAutocompleteInputValue] = useState("");
   const [autocompleteSelectedValue, setAutocompleteSelectedValue] =
     useState("");
+  const [menu, setMenu] = useState<MenuData>({ menuTitle: "" });
+  const [menuTitle, setMenuTitle] = useState({ menuTitle: "", saved: false });
+  const [menuCategories, setMenuCategories] = useState<MenuCategory[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItems>({});
+  const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
+  const menuId = searchParams.get("menu");
+  const userId = searchParams.get("user");
+
+  useEffect(() => {
+    const fetchUserMenu = async () => {
+      if (!userId || !menuId) return;
+      try {
+        const menuDocRef = doc(db, "users", userId, "menus", menuId);
+        const menuSnapshot = await getDoc(menuDocRef);
+        if (menuSnapshot.exists()) {
+          const fetchedMenuData = menuSnapshot.data() as MenuData;
+          setMenu({ id: menuSnapshot.id, ...menuSnapshot.data() } as MenuData);
+          setMenuCategories(fetchedMenuData.menuCategories || []);
+        }
+      } catch (error) {
+        console.log("Erro ao buscar menu do usuário:", error);
+      }
+    };
+    fetchUserMenu();
+  }, [userId, menuId, menuItems]);
+
+  const updateMenu = async (userId: string, menuId: string, menuData: any) => {
+    const menuDocRef = doc(db, "users", userId, "menus", menuId);
+    try {
+      await updateDoc(menuDocRef, menuData);
+      console.log("Menu atualizado com sucesso");
+    } catch (error) {
+      console.error("Erro ao atualizar menu:", error);
+    }
+  };
 
   return (
     <main
@@ -60,8 +94,8 @@ export default function EditMenu() {
             />
           </Button>
         </Link>
-
         <Input
+          autoComplete="hidden"
           isReadOnly={menuTitle.saved}
           id="menu-name-input"
           size="lg"
@@ -81,7 +115,9 @@ export default function EditMenu() {
                         menuTitle: menuTitle.menuTitle,
                       })
                     );
-                    console.log(menuTitle);
+                    updateMenu(userId!, menuId!, {
+                      menuTitle: menuTitle.menuTitle,
+                    });
                   }}
                 />
               </Button>
@@ -93,7 +129,6 @@ export default function EditMenu() {
                       menuTitle: "",
                       saved: !prevMenuTitle.saved,
                     }));
-                    console.log(menuTitle);
                   }}
                 />
               </Button>
@@ -108,7 +143,6 @@ export default function EditMenu() {
           value={menuTitle.menuTitle}
         />
       </div>
-
       <section
         id="menu-edition-and-preview-section"
         style={{
@@ -155,25 +189,36 @@ export default function EditMenu() {
               <Autocomplete
                 selectedKey={autocompleteSelectedValue}
                 onSelectionChange={setAutocompleteSelectedValue as any}
-                onClear={() => setAutocompleteSelectedValue('')}
+                onClear={() => setAutocompleteSelectedValue("")}
                 onInputChange={setAutocompleteInputValue}
                 listboxProps={{
                   emptyContent: (
                     <Button
                       className="flex justify-center w-full bg-red-900 text-white"
                       onClick={() => {
-                        setMenuCategories((prevMenuCats) => [
-                          ...prevMenuCats,
-                          { categoryTitle: autocompleteInputValue },
-                        ]);
-                        dispatch(
-                          updateMenuAddCategory({
-                            menuTitle: menuTitle.menuTitle,
-                            newCategory: {
-                              categoryTitle: autocompleteInputValue,
-                            },
+                        const newCategory = { categoryTitle: autocompleteInputValue };
+                      
+                        // Atualizar o estado local primeiro para incluir a nova categoria
+                        setMenuCategories((prevMenuCats) => {
+                          const updatedMenuCategories = [...prevMenuCats, newCategory];
+                          
+                          // Atualizar o Firestore com o estado local atualizado
+                          updateMenu(userId!, menuId!, {
+                            menuCategories: updatedMenuCategories,
                           })
-                        );
+                          .then(() => {
+                            // Após a atualização bem-sucedida no Firestore, despachar a ação Redux
+                            dispatch(updateMenuAddCategory({
+                              menuTitle: menuTitle.menuTitle,
+                              newCategory,
+                            }));
+                          })
+                          .catch((error) => {
+                            console.error("Erro ao atualizar menu no Firestore:", error);
+                            // Tratar possíveis erros
+                          });
+                          return updatedMenuCategories; // Retornar o estado atualizado
+                        });
                       }}
                     >
                       Inserir Categoria
@@ -184,7 +229,7 @@ export default function EditMenu() {
                             para editar"
                 className="max-w-xs"
               >
-                {menuCategories.map((menuCategory) => (
+                {menuCategories?.map((menuCategory) => (
                   <AutocompleteItem
                     key={menuCategory.categoryTitle}
                     value={menuCategory.categoryTitle}
@@ -195,13 +240,28 @@ export default function EditMenu() {
               </Autocomplete>
             </div>
           </section>
-          { autocompleteSelectedValue && <AddProduct 
-                                            categoryTitle={autocompleteSelectedValue} 
-                                            menuTitle={menuTitle.menuTitle} 
-                                            />}
+          {autocompleteSelectedValue && (
+            <AddProduct
+            categoryTitle={autocompleteSelectedValue}
+            menuTitle={menuTitle.menuTitle}
+            onSave={
+            (newProduct) => {
+            setMenuItems((prevItems) => ({
+            ...prevItems,
+            [newProduct.itemCategoryTitle!]: [
+            ...(prevItems[newProduct.itemCategoryTitle!] || []),
+            newProduct,
+            ],
+            }))
+            console.log(JSON.stringify(menuItems))
+            }
+            }
+            />
+          )}
         </section>
         <MenuPreview
-          menuTitle={menuTitle.menuTitle}
+          menuItems={menuItems}
+          menuTitle={menuTitle.menuTitle || menu.menuTitle}
           menuCategories={menuCategories}
         />
       </section>

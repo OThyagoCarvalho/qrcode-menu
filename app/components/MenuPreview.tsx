@@ -2,6 +2,7 @@ import { selectMenus } from "../redux/features/menu/menuSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 export interface MenuData {
+  id?: string;
   userId?: string;
   menuId?: string;
   menuTitle: string;
@@ -19,7 +20,7 @@ export interface MenuCategory {
 }
 
 export interface MenuItem {
-  itemId: string;
+  itemId?: string;
   categoryId?: string;
   menuId?: string;
   itemTitle: string;
@@ -57,32 +58,10 @@ export interface MenuItem {
 }
 
 export default function MenuPreview({
-//   menuTitle = "Default Menu Title",
-//   menuCategories = [
-//     {
-//       categoryTitle: "Default Category",
-//       categoryItems: [
-//         {
-//           itemId: "default_001",
-//           itemTitle: "Default Item",
-//           itemPrice: 28,
-//         },
-//         {
-//           itemId: "default_002",
-//           itemTitle: "Another default Item",
-//           itemPrice: 32.5,
-//         },
-//       ],
-//     },
-//   ],
-  ...props
-}: MenuData) {
-  
-    const dispatch = useAppDispatch()
-    const menus = useAppSelector(selectMenus)  
-    const menu = menus[0]
-    const { menuTitle, menuCategories } = menu
-  
+  menuTitle = '',
+  menuCategories,
+  menuItems
+}: MenuData | any) {
     return (
     <main
       className="bg-red-900"
@@ -115,8 +94,7 @@ export default function MenuPreview({
             textTransform: 'uppercase'
           }}
         >
-          {" "}
-          {menuTitle}{" "}
+          {menuTitle}
         </h2>
 
         <section
@@ -124,9 +102,9 @@ export default function MenuPreview({
             marginTop: "72px",
           }}
         >
-          {menuCategories?.map((category) => {
+          {menuCategories?.map((category: any) => {
             return (
-              <div>
+              <div key={category.categoryTitle}>
                 <h3
                   style={{
                     fontSize: "28px",
@@ -136,15 +114,15 @@ export default function MenuPreview({
                     textTransform: 'uppercase'
                   }}
                 >
-                  {" "}
-                  {category.categoryTitle}{" "}
+                  {category.categoryTitle}
                 </h3>
                 <ul
                   style={{
                     margin: "48px 96px",
                   }}
                 >
-                  {category.categoryItems?.map((item) => {
+                  {category.categoryItems?.map((item: any) => {
+                    console.log('item' + item)
                     return (
                       <li
                         style={{
@@ -162,6 +140,29 @@ export default function MenuPreview({
                       </li>
                     );
                   })}
+                  
+                  {/* local only */}
+                  {
+                    menuItems[category.categoryTitle]?.map((item: any) => {
+                      console.log('item' + item)
+                      return (
+                        <li
+                          style={{
+                            color: "white",
+                            fontSize: "16px",
+                            fontWeight: "lighter",
+                            display: "flex",
+                            flex: "1",
+                            justifyContent: "space-between",
+                            marginBottom: "16px",
+                          }}
+                        >
+                          <p>{item.itemTitle}</p>
+                          <p> R$ {item.itemPrice}</p>
+                        </li>
+                      );
+                    })
+                  }
                 </ul>
               </div>
             );

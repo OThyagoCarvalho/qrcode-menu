@@ -9,7 +9,7 @@ import { MenuItem } from "../interfaces/menu";
 interface AddProductProps {
   menuTitle: string;
   categoryTitle?: string;
-  onSave?: () => void;
+  onSave?: (newProduct: MenuItem) => void;
   onClear?: () => void;
 }
 
@@ -42,11 +42,11 @@ export default function AddProduct({
 
             } as MenuItem
         }
-        onSave && onSave()
+        onSave && onSave(product.newProduct)
+        
         dispatch(updateCategoryAddProduct(
             product
         ))
-        console.log(JSON.stringify(product))
         handleClear()
     }
 

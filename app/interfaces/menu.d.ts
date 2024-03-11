@@ -1,3 +1,8 @@
+import { UserInfo } from "firebase/auth";
+
+export interface AppUser extends Omit<UserInfo, 'phoneNumber', 'providerId'> {
+}
+
 export interface MenuData {
   userId?: string;
   menuId?: string;
