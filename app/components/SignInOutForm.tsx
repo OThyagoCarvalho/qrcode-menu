@@ -1,28 +1,28 @@
-'use client';
-import { Button, Input } from '@nextui-org/react';
+"use client";
+import { Button, Input } from "@nextui-org/react";
 
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/16/solid';
-import { FormEvent, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/16/solid";
+import { FormEvent, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-} from 'firebase/auth';
-import { auth } from '../lib/firebase';
+} from "firebase/auth";
+import { auth } from "../lib/firebase";
 
 type SignformProps = {
-  method: 'in' | 'up';
+  method: "in" | "up";
 };
 
 export default function SignInOutForm({ method }: SignformProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
   const router = useRouter();
 
@@ -34,11 +34,11 @@ export default function SignInOutForm({ method }: SignformProps) {
     e.preventDefault();
 
     if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-      setErrorMessage('Email inválido.');
+      setErrorMessage("Email inválido.");
       return;
     }
 
-    if (method === 'in') {
+    if (method === "in") {
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
@@ -46,18 +46,17 @@ export default function SignInOutForm({ method }: SignformProps) {
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          if (errorMessage.includes('invalid-credential')) {
-            setErrorMessage('Email ou senha inválidos.');
+          if (errorMessage.includes("invalid-credential")) {
+            setErrorMessage("Email ou senha inválidos.");
           }
         });
 
-      router.push('/dashboard');
+      router.push("/dashboard");
     } else {
       if (password !== passwordConfirmation) {
-        setErrorMessage('As senhas não condizem.');
+        setErrorMessage("As senhas não condizem.");
         return;
       }
-
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
@@ -67,10 +66,9 @@ export default function SignInOutForm({ method }: SignformProps) {
           const errorMessage = error.message;
           console.log(errorMessage);
         });
-      setPassword('');
-      setEmail('');
-      setPasswordConfirmation('');
-      console.log('cadastro feito com sucesso');
+      setPassword("");
+      setEmail("");
+      setPasswordConfirmation("");
     }
   }
 
@@ -83,7 +81,7 @@ export default function SignInOutForm({ method }: SignformProps) {
             w-full
             flex-wrap
             md:flex-nowrap
-            ${method === 'in' ? 'gap-6' : 'gap-4'}   
+            ${method === "in" ? "gap-6" : "gap-4"}   
             bg-white
             max-w-72
             p-0
@@ -94,8 +92,7 @@ export default function SignInOutForm({ method }: SignformProps) {
         `}
     >
       <h1 className="font-semibold text-4xl text-black">
-        {' '}
-        {method === 'in' ? 'Entrar' : 'Cadastrar'}{' '}
+        {method === "in" ? "Entrar" : "Cadastrar"}
       </h1>
 
       <Input
@@ -106,13 +103,13 @@ export default function SignInOutForm({ method }: SignformProps) {
         required
         value={email}
         onChange={(e) => {
-          setErrorMessage('');
+          setErrorMessage("");
           setEmail(e.target.value);
         }}
       />
       <Input
         variant="underlined"
-        type={showPassword ? 'text' : 'password'}
+        type={showPassword ? "text" : "password"}
         label="senha"
         placeholder="insira sua senha"
         endContent={
@@ -126,52 +123,46 @@ export default function SignInOutForm({ method }: SignformProps) {
         }
         required
         onChange={(e) => {
-          setErrorMessage('');
+          setErrorMessage("");
           setPassword(e.target.value);
         }}
       />
-      {method === 'up' && (
+      {method === "up" && (
         <Input
           variant="underlined"
-          type={showPassword ? 'text' : 'password'}
+          type={showPassword ? "text" : "password"}
           label=""
           placeholder="repita sua senha"
           required
           onChange={(e) => {
-            setErrorMessage('');
+            setErrorMessage("");
             setPasswordConfirmation(e.target.value);
           }}
         />
       )}
       {errorMessage && (
         <div>
-          {' '}
           <p className="text-red-900 text-xs">{errorMessage}</p>
         </div>
       )}
-      {method === 'in' && (
+      {method === "in" && (
         <p className="font-extralight text-sm">
-          {' '}
-          Não é membro?{' '}
-          <Link className="text-red-900 font-medium" href={'/sign-up'}>
-            {' '}
-            Cadastre-se já{' '}
+          Não é membro?
+          <Link className="text-red-900 font-medium" href={"/sign-up"}>
+            Cadastre-se já
           </Link>
         </p>
       )}
-      {method === 'up' && (
+      {method === "up" && (
         <p className="font-extralight text-sm">
-          {' '}
-          Já é membro?{' '}
-          <Link className="text-red-900 font-medium" href={'/sign-in'}>
-            {' '}
-            Entre aqui{' '}
+          Já é membro?
+          <Link className="text-red-900 font-medium" href={"/sign-in"}>
+            Entre aqui
           </Link>
         </p>
       )}
       <Button className="bg-red-900 text-white" radius="lg" type="submit">
-        {' '}
-        {method === 'in' ? 'Entrar' : 'Cadastrar'}
+        {method === "in" ? "Entrar" : "Cadastrar"}
       </Button>
     </form>
   );

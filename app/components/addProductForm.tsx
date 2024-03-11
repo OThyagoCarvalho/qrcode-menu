@@ -46,7 +46,6 @@ export default function AddProduct({
         dispatch(updateCategoryAddProduct(
             product
         ))
-        console.log(JSON.stringify(product))
         handleClear()
     }
 

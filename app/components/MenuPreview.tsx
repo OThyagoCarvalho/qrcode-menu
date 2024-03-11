@@ -2,6 +2,7 @@ import { selectMenus } from "../redux/features/menu/menuSlice";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
 export interface MenuData {
+  id?: string;
   userId?: string;
   menuId?: string;
   menuTitle: string;
@@ -57,31 +58,12 @@ export interface MenuItem {
 }
 
 export default function MenuPreview({
-//   menuTitle = "Default Menu Title",
-//   menuCategories = [
-//     {
-//       categoryTitle: "Default Category",
-//       categoryItems: [
-//         {
-//           itemId: "default_001",
-//           itemTitle: "Default Item",
-//           itemPrice: 28,
-//         },
-//         {
-//           itemId: "default_002",
-//           itemTitle: "Another default Item",
-//           itemPrice: 32.5,
-//         },
-//       ],
-//     },
-//   ],
-  ...props
+  menuTitle = '',
+  menuCategories = []
 }: MenuData) {
   
     const dispatch = useAppDispatch()
     const menus = useAppSelector(selectMenus)  
-    const menu = menus[0]
-    const { menuTitle, menuCategories } = menu
   
     return (
     <main
@@ -115,8 +97,8 @@ export default function MenuPreview({
             textTransform: 'uppercase'
           }}
         >
-          {" "}
-          {menuTitle}{" "}
+          
+          {menuTitle}
         </h2>
 
         <section
@@ -136,8 +118,7 @@ export default function MenuPreview({
                     textTransform: 'uppercase'
                   }}
                 >
-                  {" "}
-                  {category.categoryTitle}{" "}
+                  {category.categoryTitle}
                 </h3>
                 <ul
                   style={{

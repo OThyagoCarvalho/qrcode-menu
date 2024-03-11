@@ -1,12 +1,15 @@
 "use client";
 import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useAppSelector, useAppDispatch } from "../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 
-import CreateSection from "../components/CreateSection";
-import MenuPreview, { MenuCategory, MenuData } from "../components/MenuPreview";
+import CreateSection from "../../components/CreateSection";
+import MenuPreview, {
+  MenuCategory,
+  MenuData,
+} from "../../components/MenuPreview";
 import Link from "next/link";
-import InputText from "../components/InputText";
+import InputText from "../../components/InputText";
 import {
   Autocomplete,
   AutocompleteItem,
@@ -20,11 +23,12 @@ import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import DriveFileRenameOutlineRoundedIcon from "@mui/icons-material/DriveFileRenameOutlineRounded";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 
-import AddProduct from "../components/addProductForm";
+import AddProduct from "../../components/addProductForm";
 import {
   addMenu,
+  selectMenus,
   updateMenuAddCategory,
-} from "../redux/features/menu/menuSlice";
+} from "../../redux/features/menu/menuSlice";
 
 export default function EditMenu() {
   const searchParams = useSearchParams();
@@ -34,8 +38,9 @@ export default function EditMenu() {
   const [menuCategories, setMenuCategories] = useState<MenuCategory[]>([]);
 
   const [autocompleteInputValue, setAutocompleteInputValue] = useState("");
-  const [autocompleteSelectedValue, setAutocompleteSelectedValue] =
-    useState("");
+  const [autocompleteSelectedValue, setAutocompleteSelectedValue] = useState("");
+
+  const userMenus = useAppSelector(selectMenus)
 
   return (
     <main
@@ -155,7 +160,7 @@ export default function EditMenu() {
               <Autocomplete
                 selectedKey={autocompleteSelectedValue}
                 onSelectionChange={setAutocompleteSelectedValue as any}
-                onClear={() => setAutocompleteSelectedValue('')}
+                onClear={() => setAutocompleteSelectedValue("")}
                 onInputChange={setAutocompleteInputValue}
                 listboxProps={{
                   emptyContent: (
@@ -195,10 +200,12 @@ export default function EditMenu() {
               </Autocomplete>
             </div>
           </section>
-          { autocompleteSelectedValue && <AddProduct 
-                                            categoryTitle={autocompleteSelectedValue} 
-                                            menuTitle={menuTitle.menuTitle} 
-                                            />}
+          {autocompleteSelectedValue && (
+            <AddProduct
+              categoryTitle={autocompleteSelectedValue}
+              menuTitle={menuTitle.menuTitle}
+            />
+          )}
         </section>
         <MenuPreview
           menuTitle={menuTitle.menuTitle}

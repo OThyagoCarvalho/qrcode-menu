@@ -8,17 +8,7 @@ import {
 
 const getInitialStore = (): MenuData[] => {
   // get initial state from google firestore
-  const initialState = [
-    {
-      userId: "",
-      menuId: "",
-      menuTitle: "",
-      menuDescription: "",
-      menuUrl: "",
-      menuCategories: [],
-      menuThumbnailImgPath: "",
-    },
-  ];
+  const initialState = [] as MenuData[];
   return initialState;
 };
 
