@@ -125,6 +125,7 @@ export default function MenuPreview({
                     console.log('item' + item)
                     return (
                       <li
+                        key={item.itemTitle}
                         style={{
                           color: "white",
                           fontSize: "16px",
