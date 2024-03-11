@@ -261,7 +261,7 @@ export default function EditMenu() {
         </section>
         <MenuPreview
           menuTitle={menuTitle.menuTitle || menu.menuTitle}
-          menuCategories={menu.menuCategories}
+          menuCategories={menuCategories}
         />
       </section>
     </main>
