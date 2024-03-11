@@ -20,7 +20,7 @@ export interface MenuCategory {
 }
 
 export interface MenuItem {
-  itemId: string;
+  itemId?: string;
   categoryId?: string;
   menuId?: string;
   itemTitle: string;
@@ -59,8 +59,9 @@ export interface MenuItem {
 
 export default function MenuPreview({
   menuTitle = '',
-  menuCategories
-}: MenuData) {
+  menuCategories,
+  menuItems
+}: MenuData | any) {
     return (
     <main
       className="bg-red-900"
@@ -101,7 +102,7 @@ export default function MenuPreview({
             marginTop: "72px",
           }}
         >
-          {menuCategories?.map((category) => {
+          {menuCategories?.map((category: any) => {
             return (
               <div key={category.categoryTitle}>
                 <h3
@@ -120,7 +121,7 @@ export default function MenuPreview({
                     margin: "48px 96px",
                   }}
                 >
-                  {category.categoryItems?.map((item) => {
+                  {category.categoryItems?.map((item: any) => {
                     console.log('item' + item)
                     return (
                       <li
@@ -139,6 +140,29 @@ export default function MenuPreview({
                       </li>
                     );
                   })}
+                  
+                  {/* local only */}
+                  {
+                    menuItems[category.categoryTitle]?.map((item: any) => {
+                      console.log('item' + item)
+                      return (
+                        <li
+                          style={{
+                            color: "white",
+                            fontSize: "16px",
+                            fontWeight: "lighter",
+                            display: "flex",
+                            flex: "1",
+                            justifyContent: "space-between",
+                            marginBottom: "16px",
+                          }}
+                        >
+                          <p>{item.itemTitle}</p>
+                          <p> R$ {item.itemPrice}</p>
+                        </li>
+                      );
+                    })
+                  }
                 </ul>
               </div>
             );

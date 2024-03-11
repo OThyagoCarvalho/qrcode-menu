@@ -16,7 +16,6 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { MenuData } from "@/app/interfaces/menu";
-import { redirect } from "next/navigation";
 
 export default function Dashboard() {
   const [user] = useAuthState(auth);

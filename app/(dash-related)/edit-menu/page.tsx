@@ -1,49 +1,43 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useAppSelector, useAppDispatch } from "../../redux/hooks";
-
-import CreateSection from "../../components/CreateSection";
+import { useAppDispatch } from "../../redux/hooks";
 import MenuPreview, {
   MenuCategory,
   MenuData,
 } from "../../components/MenuPreview";
 import Link from "next/link";
-import InputText from "../../components/InputText";
 import {
   Autocomplete,
   AutocompleteItem,
   Button,
   Input,
-  menu,
 } from "@nextui-org/react";
 
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import DriveFileRenameOutlineRoundedIcon from "@mui/icons-material/DriveFileRenameOutlineRounded";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 
 import AddProduct from "../../components/addProductForm";
 import {
   addMenu,
-  selectMenus,
-  setStore,
   updateMenuAddCategory,
 } from "../../redux/features/menu/menuSlice";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/app/lib/firebase";
 import { MenuItem } from "@/app/interfaces/menu";
+interface MenuItems {
+  [categoryTitle: string]: MenuItem[]; // Items by category
+}
 
 export default function EditMenu() {
-  const storedMenu = useAppSelector(selectMenus);
   const [autocompleteInputValue, setAutocompleteInputValue] = useState("");
   const [autocompleteSelectedValue, setAutocompleteSelectedValue] =
     useState("");
   const [menu, setMenu] = useState<MenuData>({ menuTitle: "" });
   const [menuTitle, setMenuTitle] = useState({ menuTitle: "", saved: false });
   const [menuCategories, setMenuCategories] = useState<MenuCategory[]>([]);
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-
+  const [menuItems, setMenuItems] = useState<MenuItems>({});
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const menuId = searchParams.get("menu");
@@ -56,7 +50,6 @@ export default function EditMenu() {
         const menuDocRef = doc(db, "users", userId, "menus", menuId);
         const menuSnapshot = await getDoc(menuDocRef);
         if (menuSnapshot.exists()) {
-          console.log("Menu específico do usuário:", menuSnapshot.data());
           const fetchedMenuData = menuSnapshot.data() as MenuData;
           setMenu({ id: menuSnapshot.id, ...menuSnapshot.data() } as MenuData);
           setMenuCategories(fetchedMenuData.menuCategories || []);
@@ -66,7 +59,7 @@ export default function EditMenu() {
       }
     };
     fetchUserMenu();
-  }, [userId, menuId]);
+  }, [userId, menuId, menuItems]);
 
   const updateMenu = async (userId: string, menuId: string, menuData: any) => {
     const menuDocRef = doc(db, "users", userId, "menus", menuId);
@@ -203,15 +196,11 @@ export default function EditMenu() {
                     <Button
                       className="flex justify-center w-full bg-red-900 text-white"
                       onClick={() => {
-
-                        console.log('menuCategories antes:' + JSON.stringify(menuCategories))
-
                         const newCategory = { categoryTitle: autocompleteInputValue };
                       
                         // Atualizar o estado local primeiro para incluir a nova categoria
                         setMenuCategories((prevMenuCats) => {
                           const updatedMenuCategories = [...prevMenuCats, newCategory];
-                          console.log('menuCategories depois: ' + JSON.stringify(updatedMenuCategories))
                           
                           // Atualizar o Firestore com o estado local atualizado
                           updateMenu(userId!, menuId!, {
@@ -228,7 +217,6 @@ export default function EditMenu() {
                             console.error("Erro ao atualizar menu no Firestore:", error);
                             // Tratar possíveis erros
                           });
-                      
                           return updatedMenuCategories; // Retornar o estado atualizado
                         });
                       }}
@@ -254,12 +242,25 @@ export default function EditMenu() {
           </section>
           {autocompleteSelectedValue && (
             <AddProduct
-              categoryTitle={autocompleteSelectedValue}
-              menuTitle={menuTitle.menuTitle}
+            categoryTitle={autocompleteSelectedValue}
+            menuTitle={menuTitle.menuTitle}
+            onSave={
+            (newProduct) => {
+            setMenuItems((prevItems) => ({
+            ...prevItems,
+            [newProduct.itemCategoryTitle!]: [
+            ...(prevItems[newProduct.itemCategoryTitle!] || []),
+            newProduct,
+            ],
+            }))
+            console.log(JSON.stringify(menuItems))
+            }
+            }
             />
           )}
         </section>
         <MenuPreview
+          menuItems={menuItems}
           menuTitle={menuTitle.menuTitle || menu.menuTitle}
           menuCategories={menuCategories}
         />
