@@ -3,7 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyClBVPoaoGK5g2vikpZ7TYBmstLTdOkJpQ",
+  apiKey: PROCESS.ENV.API_KEY,
   authDomain: "qr-codemenu-de349.firebaseapp.com",
   projectId: "qr-codemenu-de349",
   storageBucket: "qr-codemenu-de349.appspot.com",
